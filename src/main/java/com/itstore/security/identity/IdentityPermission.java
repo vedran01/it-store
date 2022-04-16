@@ -4,8 +4,10 @@ import com.itstore.security.permission.Permission;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+
 @RequiredArgsConstructor
-public final class IdentityPermission {
+public final class IdentityPermission implements Serializable {
 
     private final static String PERMISSION_DELIMITER = "::";
     private final static String PERMISSION_GRANT_DELIMITER = ":";

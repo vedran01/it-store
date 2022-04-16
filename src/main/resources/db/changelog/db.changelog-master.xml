@@ -338,4 +338,7 @@
 
     </changeSet>
 
+    <changeSet author="vbradara" id="49872a5f-3c32-4f11-b42a-9cb226313e85">
+        <sqlFile path="db/changelog/security_acl_schema.sql"/>
+    </changeSet>
 </databaseChangeLog>
