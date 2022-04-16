@@ -7,6 +7,7 @@ import com.itstore.security.SecurityService;
 import com.itstore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,27 @@ public class UserResourceController {
     @GetMapping
     ResponseEntity<PageDTO<UserDTO>> findAll(Pageable pageable, @RequestParam(required = false) String search) {
         return ResponseEntity.ok(service.findAll(pageable, search));
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
+
+    @PostMapping
+    ResponseEntity<UserDTO> create(@RequestBody UserDTO user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(user));
+    }
+
+    @PutMapping
+    ResponseEntity<UserDTO> update(@RequestBody UserDTO user) {
+        return ResponseEntity.ok(service.update(user));
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> deleteById(@PathVariable Long id) {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/permissions")

@@ -1,7 +1,7 @@
 package com.itstore.security.identity;
 
-import com.itstore.security.permission.Permission;
 import com.itstore.core.util.Util;
+import com.itstore.security.permission.Permission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

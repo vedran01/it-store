@@ -26,11 +26,13 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        LOG.info("Token auth provider");
+
 
         JWTAuthenticationToken token = (JWTAuthenticationToken) authentication;
 
         String uuID = token.getPrincipalUID();
+
+        LOG.debug("Token auth provider uuid {} : principal: {}", uuID, token.getPrincipal());
 
         List<? extends GrantedAuthority> permissions = service.getPermissions(uuID)
                 .stream()

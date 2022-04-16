@@ -16,14 +16,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Principal;
 
 public class JWTHeaderFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JWTHeaderFilter.class);
-
-    private final String TOKEN_HEADER = "Authorization";
-    private final String TOKEN_PREFIX = "Bearer ";
 
     private final AuthenticationManager manager;
     private final JWTTokenService tokenService;
@@ -60,12 +56,15 @@ public class JWTHeaderFilter extends OncePerRequestFilter {
 
     public String obtainToken(HttpServletRequest request) {
 
-        String bearer = request.getHeader(TOKEN_HEADER);
+        final String TOKEN_HEADER = "Authorization";
+        final String TOKEN_PREFIX = "Bearer ";
 
-        if (StringUtils.isNotBlank(bearer)) {
-            return StringUtils.replace(bearer, TOKEN_PREFIX, "");
+        final String bearer = request.getHeader(TOKEN_HEADER);
+
+        if (StringUtils.isBlank(bearer) || !StringUtils.startsWith(bearer, TOKEN_PREFIX)) {
+            LOG.debug("Token has not {} prefix : {}", TOKEN_PREFIX, bearer);
         }
 
-        return null;
+        return StringUtils.replace(bearer, TOKEN_PREFIX, "");
     }
 }
