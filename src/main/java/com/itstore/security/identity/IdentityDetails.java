@@ -34,7 +34,7 @@ public record IdentityDetails(IdentityDetailsDTO identity) implements UserDetail
     @Override
     public boolean isAccountNonExpired() {
         Date validTill = identity.getValidTill();
-        return validTill == null || Util.isDateAfter(validTill);
+        return validTill == null || Util.isDateAfterNow(validTill);
     }
 
     @Override

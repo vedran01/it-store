@@ -1,6 +1,7 @@
 package com.itstore.security.permission;
 
 import com.itstore.security.identity.IdentityPermission;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ public class PermissionDao {
         this.em = em;
     }
 
-
+    @Cacheable(value = "permission-cache", key = "#user + '#' + #resources")
     @Transactional(readOnly = true)
     public List<IdentityPermission> getPermissions(String user, Set<String> resources) {
 
@@ -47,8 +48,8 @@ public class PermissionDao {
                 "LEFT JOIN sec_permission sc5 ON sc5.id = sc2.id AND sc5.resource_id = res.id " +
                 "LEFT JOIN sec_permission sc6 ON sc6.id = sc3.id AND sc6.resource_id = res.id ";
 
-        
-        String where = "WHERE sid.id = :userId ";
+
+        String where = "WHERE sid.uuid = :userId ";
 
         if (resources != null) {
             where += "AND res.key IN (:resource) ";

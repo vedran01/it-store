@@ -1,13 +1,12 @@
 package com.itstore.security.identity;
 
-import com.itstore.security.identity.IdentityPermission;
 import com.itstore.security.permission.Permission;
-import com.itstore.security.permission.eval.PermissionEvaluation;
-import com.itstore.security.permission.eval.PermissionEvaluator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+
+import static com.itstore.security.permission.PermissionResolver.resolve;
 
 @RequiredArgsConstructor
 public class IdentityDetailsDTO {
@@ -85,10 +84,7 @@ public class IdentityDetailsDTO {
 
     public Permission[] getPermissions() {
         IdentityPermission identityPermission = new IdentityPermission(getsId(), null, permissions, groupPermissions, rolePermissions);
-        return PermissionEvaluator.evaluate(PermissionEvaluation.MERGE,
-                identityPermission.getPermissions(),
-                identityPermission.getRolePermissions(),
-                identityPermission.getGroupPermissions());
+        return resolve(identityPermission.getPermissions(), identityPermission.getRolePermissions(), identityPermission.getGroupPermissions());
     }
 
     public String[] roles() {

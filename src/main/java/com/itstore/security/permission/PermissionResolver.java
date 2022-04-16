@@ -1,13 +1,22 @@
-package com.itstore.security.permission.eval;
+package com.itstore.security.permission;
 
-import com.itstore.security.permission.Permission;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PermissionEvaluator {
+import static com.itstore.security.permission.PermissionResolver.ResolverMethod.*;
 
-    public static Permission[] evaluate(PermissionEvaluation type, Permission[]... permissions) {
+public class PermissionResolver {
+
+    public enum ResolverMethod {
+        UNANIMOUS, AFFIRMATIVE
+    }
+
+    public static Permission[] resolve(Permission[] ...permissions) {
+        return resolve(UNANIMOUS, permissions);
+    }
+
+    public static Permission[] resolve(ResolverMethod type, Permission[]... permissions) {
 
         Map<String, Boolean> result = new HashMap<>();
 
@@ -17,10 +26,10 @@ public class PermissionEvaluator {
 
                 boolean permitted = permission.isPermitted() > 0;
 
-                if (PermissionEvaluation.MERGE.equals(type) && permitted) {
+                if (AFFIRMATIVE.equals(type) && permitted) {
                     result.put(permission.getPermission(), true);
 
-                } else if (PermissionEvaluation.OVERRIDE.equals(type)) {
+                } else if (UNANIMOUS.equals(type)) {
 
                     if (!result.containsKey(permission.getPermission())) {
                         result.put(permission.getPermission(), permitted);
