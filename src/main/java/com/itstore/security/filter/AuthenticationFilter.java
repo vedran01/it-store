@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,7 +36,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    record AuthenticationResponse(String token, String qrCode) {
+    record AuthenticationResponse(String token, String qrCode, String message, String status) {
     }
 
     private final AuthenticationManager manager;
@@ -103,7 +103,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
                 if (!success) {
                     LOG.debug("Current code: {}", authenticator.code(details.secret2fa()));
-                    this.unsuccessfulAuthentication(request, response, new AuthenticationServiceException(""));
+                    request.setAttribute("status", "CODE_2FA");
+                    this.unsuccessfulAuthentication(request, response, new InsufficientAuthenticationException("Additional authentication"));
                     return;
                 }
             } else if (details.requires2faSetup()) {
@@ -114,7 +115,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 eventPublisher.publishEvent(new S2faSecretGenerated(details.identity().getId(), secret2fa));
 
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(null, code2fa)));
+                response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(null, code2fa,  null,"SETUP_2FA")));
                 return;
 
             }
@@ -125,7 +126,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-            response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(token, null)));
+            response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(token, null, null, "SUCCESS")));
 
 
         } catch (Exception e) {
@@ -134,6 +135,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             chain.doFilter(request, response);
         }
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        String status = (String) request.getAttribute("status");
+        response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(null, null, failed.getMessage(), status)));
     }
 
     private boolean isSuccess(IdentityDetails details, String code) {
