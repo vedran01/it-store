@@ -6,7 +6,9 @@ import com.itstore.security.filter.JWTHeaderFilter;
 import com.itstore.security.identity.IdentityDetailsService;
 import com.itstore.security.token.JWTTokenService;
 import com.itstore.security.token.TokenAuthenticationProvider;
+import com.itstore.security.twofactor.S2faAuthenticator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +27,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final SecurityService securityService;
 
     private final IdentityDetailsService detailsService;
+
+    private final S2faAuthenticator authenticator;
+
+    private final ApplicationEventPublisher eventPublisher;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -45,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable();
 
-        http.addFilter(new AuthenticationFilter(authenticationManager(), tokenService));
+        http.addFilter(new AuthenticationFilter(authenticationManager(), tokenService, authenticator, eventPublisher));
         http.addFilterAfter(new JWTHeaderFilter(authenticationManager(), tokenService), AuthenticationFilter.class);
 
         http.authorizeHttpRequests().anyRequest().authenticated();

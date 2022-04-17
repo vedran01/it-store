@@ -14,14 +14,6 @@ import java.util.stream.Collectors;
 public record IdentityDetails(IdentityDetailsDTO identity) implements UserDetails {
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(identity.getPermissions())
-                .map(Permission::getPermission)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public String getPassword() {
         return identity.getPassword();
     }
@@ -29,6 +21,14 @@ public record IdentityDetails(IdentityDetailsDTO identity) implements UserDetail
     @Override
     public String getUsername() {
         return identity.getUsername();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Arrays.stream(identity.getPermissions())
+                .map(Permission::getPermission)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -50,5 +50,16 @@ public record IdentityDetails(IdentityDetailsDTO identity) implements UserDetail
     @Override
     public boolean isEnabled() {
         return identity.getEnabled();
+    }
+
+    public boolean requires2faCode() {
+        return identity.getEnabled2fa() && identity.getConfigured2fa();
+    }
+    public boolean requires2faSetup() {
+       return identity.getEnabled2fa() && (!identity.getConfigured2fa() || secret2fa() == null);
+    }
+
+    public String secret2fa() {
+        return identity.getSecret2fa();
     }
 }

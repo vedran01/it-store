@@ -1,13 +1,21 @@
 package com.itstore.security.filter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itstore.security.identity.IdentityDetails;
 import com.itstore.security.token.JWTTokenService;
 import com.itstore.security.token.TokenClaims;
+import com.itstore.security.twofactor.S2faAuthenticator;
+import com.itstore.security.twofactor.event.S2faSecretAccepted;
+import com.itstore.security.twofactor.event.S2faSecretGenerated;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -24,17 +32,30 @@ import java.time.LocalDateTime;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    record AuthenticationRequest(String username, String password){}
+    record AuthenticationRequest(String username, String password) {
+    }
 
-    record AuthenticationResponse(String token) {}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    record AuthenticationResponse(String token, String qrCode) {
+    }
 
     private final AuthenticationManager manager;
     private final JWTTokenService tokenService;
+
+    private final S2faAuthenticator authenticator;
+
+    private final ApplicationEventPublisher eventPublisher;
+
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public AuthenticationFilter(AuthenticationManager manager, JWTTokenService tokenService) {
+    public AuthenticationFilter(AuthenticationManager manager,
+                                JWTTokenService tokenService,
+                                S2faAuthenticator authenticator,
+                                ApplicationEventPublisher eventPublisher) {
         this.manager = manager;
         this.tokenService = tokenService;
+        this.authenticator = authenticator;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -69,13 +90,43 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             IdentityDetails details = (IdentityDetails) authResult.getPrincipal();
 
+
+            String code = request.getParameter("code");
+
+            if (details.requires2faCode() || StringUtils.isNotBlank(code)) {
+
+                boolean success = isSuccess(details, code);
+
+                if (success && !details.identity().getConfigured2fa()) {
+                    eventPublisher.publishEvent(new S2faSecretAccepted(details.identity().getId()));
+                }
+
+                if (!success) {
+                    LOG.debug("Current code: {}", authenticator.code(details.secret2fa()));
+                    this.unsuccessfulAuthentication(request, response, new AuthenticationServiceException(""));
+                    return;
+                }
+            } else if (details.requires2faSetup()) {
+
+                final String secret2fa = authenticator.generatePassword();
+                final String code2fa = authenticator.generateQRCode(details.getUsername(), secret2fa);
+
+                eventPublisher.publishEvent(new S2faSecretGenerated(details.identity().getId(), secret2fa));
+
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(null, code2fa)));
+                return;
+
+            }
+
             TokenClaims claims = TokenClaims.of(details);
 
             String token = tokenService.generateToken(claims);
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-            response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(token)));
+            response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(token, null)));
+
 
         } catch (Exception e) {
 
@@ -83,5 +134,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             chain.doFilter(request, response);
         }
+    }
+
+    private boolean isSuccess(IdentityDetails details, String code) {
+
+        if (StringUtils.isNotBlank(code) && NumberUtils.isParsable(code)) {
+            return authenticator.validate(details.secret2fa(), Integer.parseInt(code));
+        }
+
+        return false;
     }
 }
