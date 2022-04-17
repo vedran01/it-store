@@ -52,8 +52,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         try (InputStream is = request.getInputStream()) {
 
-            return mapper.reader()
-                    .readValue(is, AuthenticationRequest.class);
+            return mapper.reader().readValue(is, AuthenticationRequest.class);
+
         } catch (IOException e) {
 
             LOG.error("Invalid authentication request: {}", e.getMessage());
@@ -77,11 +77,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
             response.getWriter().write(mapper.writeValueAsString(new AuthenticationResponse(token)));
 
-        }
-        catch (Exception e) {
-            LOG.error("Error occurred while generating token: {}",e.getMessage());
+        } catch (Exception e) {
+
+            LOG.error("Error occurred while generating token: {}", e.getMessage());
+
             chain.doFilter(request, response);
         }
-
     }
 }

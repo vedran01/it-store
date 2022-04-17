@@ -47,7 +47,9 @@ public class JWTHeaderFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {
+
             LOG.error("Error occurred while verifying token: {}", e.getMessage());
+
         }
 
         chain.doFilter(request, response);
@@ -62,7 +64,10 @@ public class JWTHeaderFilter extends OncePerRequestFilter {
         final String bearer = request.getHeader(TOKEN_HEADER);
 
         if (StringUtils.isBlank(bearer) || !StringUtils.startsWith(bearer, TOKEN_PREFIX)) {
-            LOG.debug("Token has not {} prefix : {}", TOKEN_PREFIX, bearer);
+
+            LOG.debug("Token doesn't have '{}' prefix: {}", TOKEN_PREFIX, bearer);
+
+            return null;
         }
 
         return StringUtils.replace(bearer, TOKEN_PREFIX, "");

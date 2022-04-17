@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class AclSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+public class SecurityAclConfiguration extends GlobalMethodSecurityConfiguration {
 
     private final DataSource dataSource;
     private final CacheManager cacheManager;

@@ -22,11 +22,12 @@ public class SecurityIdentityCustomImpl implements SecurityIdentityCustom {
     public Optional<IdentityDetailsDTO> findIdentity(String username) {
 
         try {
-            Query query = em.createNamedQuery("Identity.findByUsername")
-                    .setParameter("username", username);
+
+            Query query = em.createNamedQuery("Identity.findByUsername").setParameter("username", username);
+
             return Optional.ofNullable((IdentityDetailsDTO) query.getSingleResult());
-        }
-        catch (NoResultException ex) {
+
+        } catch (NoResultException ex) {
             ItStoreApplication.LOG.warn("{}: username : {} ", ex.getMessage(), username);
             return Optional.empty();
         }
