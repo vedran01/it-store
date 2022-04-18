@@ -1,8 +1,8 @@
-package com.itstore.repository.custom.impl;
+package com.itstore.repository.impl;
 
 import com.itstore.ItStoreApplication;
 import com.itstore.security.identity.IdentityDetailsDTO;
-import com.itstore.repository.custom.SecurityIdentityCustom;
+import com.itstore.repository.SecurityIdentityCustomRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -10,11 +10,11 @@ import javax.persistence.Query;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class SecurityIdentityCustomImpl implements SecurityIdentityCustom {
+public class SecurityIdentityCustomRepositoryImpl implements SecurityIdentityCustomRepository {
 
     private final EntityManager em;
 
-    public SecurityIdentityCustomImpl(EntityManager em) {
+    public SecurityIdentityCustomRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 
