@@ -3,6 +3,7 @@ package com.itstore.service;
 import com.itstore.core.data.converter.Converter;
 import com.itstore.core.data.dto.PageDTO;
 import com.itstore.data.dto.UserDTO;
+import com.itstore.data.dto.UserInfoDTO;
 import com.itstore.model.User;
 import com.itstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository repository;
     private final Converter<UserDTO, User> converter;
+    private final Converter<UserInfoDTO, User> uIConverter;
 
     @PreAuthorize("hasAuthority('user.viewAll')")
     public PageDTO<UserDTO> findAll(Pageable pageable, String search) {
@@ -67,5 +69,11 @@ public class UserService {
     @PreAuthorize("hasPermission(#id, 'com.itstore.data.dto.UserDTO', 'DELETE')")
     public void deleteById(Long id) {
 
+    }
+
+    public UserInfoDTO getUserInfo(Long id) {
+        return repository.findById(id)
+                .map(uIConverter::convert)
+                .orElseThrow(() -> new NotFoundException("User info not found"));
     }
 }

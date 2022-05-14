@@ -8,6 +8,8 @@ public class TokenClaims {
 
    protected String sub;
     protected String subId;
+
+    protected Long userId;
     protected Date iat;
     protected Date nbf;
     protected Date exp;
@@ -19,6 +21,11 @@ public class TokenClaims {
         claims.iat = new Date();
         claims.nbf = Date.from(details.identity().getValidFrom().toInstant());
         claims.exp = details.identity().getValidTill();
+        claims.userId = details.identity().getId();
         return claims;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 }

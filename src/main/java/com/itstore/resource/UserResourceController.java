@@ -2,13 +2,16 @@ package com.itstore.resource;
 
 import com.itstore.core.data.dto.PageDTO;
 import com.itstore.data.dto.UserDTO;
+import com.itstore.data.dto.UserInfoDTO;
 import com.itstore.security.PermissionDTO;
 import com.itstore.security.SecurityService;
+import com.itstore.security.token.JWTAuthenticationToken;
 import com.itstore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +32,11 @@ public class UserResourceController {
     @GetMapping("/{id}")
     ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
+    }
+    @GetMapping("/info")
+    ResponseEntity<UserInfoDTO> findUserInfo(Authentication details) {
+        JWTAuthenticationToken token = (JWTAuthenticationToken) details;
+        return ResponseEntity.ok(service.getUserInfo(token.getClaims().getUserId()));
     }
 
     @PostMapping
