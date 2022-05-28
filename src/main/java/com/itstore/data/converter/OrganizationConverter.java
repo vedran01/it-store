@@ -32,6 +32,18 @@ public class OrganizationConverter implements Converter<OrganizationDTO, Organiz
 
     @Override
     public Organization convert(OrganizationDTO source, Object... additional) {
+
+        Organization organization = new Organization();
+        organization.setName(source.getName());
+
+        Contact contact = new Contact(source.getEmail(), source.getPhone());
+        organization.setContact(contact);
+
+        Location location = new Location(source.getCountry(), source.getCity(), source.getStreet(), source.getZip());
+        organization.setLocation(location);
+
+        organization.setEnabled(source.isEnabled());
+
         return Converter.super.convert(source, additional);
     }
 }

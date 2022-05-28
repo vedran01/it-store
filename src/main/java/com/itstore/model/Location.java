@@ -1,8 +1,13 @@
 package com.itstore.model;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
+@NoArgsConstructor
+@AllArgsConstructor
 public class Location {
     private String country;
     private String city;
