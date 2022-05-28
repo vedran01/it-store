@@ -2,8 +2,10 @@ package com.itstore.service;
 
 import com.itstore.core.data.converter.Converter;
 import com.itstore.core.data.dto.PageDTO;
+import com.itstore.data.converter.UserConverter;
 import com.itstore.data.dto.UserDTO;
 import com.itstore.data.dto.UserInfoDTO;
+import com.itstore.data.dto.UserSettingsDTO;
 import com.itstore.model.User;
 import com.itstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +77,13 @@ public class UserService {
         return repository.findById(id)
                 .map(uIConverter::convert)
                 .orElseThrow(() -> new NotFoundException("User info not found"));
+    }
+
+    public UserSettingsDTO findUserSettings(Long id) {
+        return repository.findById(id)
+                .map(((UserConverter) converter)::convertToSettings)
+                .orElseThrow(() -> new NotFoundException("User settings not found"));
+
+
     }
 }

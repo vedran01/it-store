@@ -1,24 +1,14 @@
-package com.itstore.model;
+package com.itstore.data.dto;
 
-import com.itstore.core.data.model.AbstractEntity;
-import com.itstore.security.model.SecurityIdentity;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.itstore.security.identity.IdentityType;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
 
-@Entity
-@Table(name = "user")
-@EntityListeners(value = AuditingEntityListener.class)
-public class User extends AbstractEntity {
+public class UserSettingsDTO {
+
+    private Long id;
     private String username;
-    private String password;
-    @Column(name = "first_name")
     private String firstname;
-    @Column(name = "last_name")
     private String lastname;
     private String email;
     private String phone;
@@ -27,13 +17,24 @@ public class User extends AbstractEntity {
     private String street;
     private String zip;
     private boolean enabled;
-    @CreatedDate
     private Date created;
-    @LastModifiedDate
     private Date modified;
+    private IdentityType type;
+    private String uuid;
+    private Date validFrom;
+    private Date validTill;
+    private Date lastLogin;
+    private Date passwordChanged;
+    private boolean enabled2fa;
+    private boolean configured2fa;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
-    private SecurityIdentity identity;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -41,14 +42,6 @@ public class User extends AbstractEntity {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstname() {
@@ -139,33 +132,67 @@ public class User extends AbstractEntity {
         this.modified = modified;
     }
 
-    public SecurityIdentity getIdentity() {
-        return identity;
+    public IdentityType getType() {
+        return type;
     }
 
-    public void setIdentity(SecurityIdentity identity) {
-        this.identity = identity;
+    public void setType(IdentityType type) {
+        this.type = type;
     }
 
-    public static User example(String search) {
-        User user = new User();
-        user.setUsername(search);
-        user.setFirstname(search);
-        user.setLastname(search);
-        user.setEmail(search);
-        return user;
+    public String getUuid() {
+        return uuid;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return username.equals(user.username);
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(username);
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
+
+    public Date getValidTill() {
+        return validTill;
+    }
+
+    public void setValidTill(Date validTill) {
+        this.validTill = validTill;
+    }
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public Date getPasswordChanged() {
+        return passwordChanged;
+    }
+
+    public void setPasswordChanged(Date passwordChanged) {
+        this.passwordChanged = passwordChanged;
+    }
+
+    public boolean isEnabled2fa() {
+        return enabled2fa;
+    }
+
+    public void setEnabled2fa(boolean enabled2fa) {
+        this.enabled2fa = enabled2fa;
+    }
+
+    public boolean isConfigured2fa() {
+        return configured2fa;
+    }
+
+    public void setConfigured2fa(boolean configured2fa) {
+        this.configured2fa = configured2fa;
     }
 }

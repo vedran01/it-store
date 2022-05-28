@@ -3,6 +3,7 @@ package com.itstore.resource;
 import com.itstore.core.data.dto.PageDTO;
 import com.itstore.data.dto.UserDTO;
 import com.itstore.data.dto.UserInfoDTO;
+import com.itstore.data.dto.UserSettingsDTO;
 import com.itstore.security.PermissionDTO;
 import com.itstore.security.SecurityService;
 import com.itstore.security.token.JWTAuthenticationToken;
@@ -19,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserResourceController {
+public class UserController {
 
     private final UserService service;
     private final SecurityService securityService;
@@ -33,10 +34,16 @@ public class UserResourceController {
     ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
+
     @GetMapping("/info")
     ResponseEntity<UserInfoDTO> findUserInfo(Authentication details) {
         JWTAuthenticationToken token = (JWTAuthenticationToken) details;
         return ResponseEntity.ok(service.getUserInfo(token.getClaims().getUserId()));
+    }
+
+    @GetMapping("/{id}/settings")
+    ResponseEntity<UserSettingsDTO> findUserSettings(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findUserSettings(id));
     }
 
     @PostMapping

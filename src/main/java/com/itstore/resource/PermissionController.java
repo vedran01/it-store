@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/permission")
 @RequiredArgsConstructor
-public class PermissionResourceController {
+public class PermissionController {
 
     private final PermissionService service;
 

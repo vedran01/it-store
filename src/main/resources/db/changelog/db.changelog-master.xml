@@ -50,8 +50,7 @@
             <column name="configured_2fa" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="secret_2fa" type="VARCHAR(30)"/>
-            <!-- @TODO @vbradara This needs to be at least 32 LONG -->
+            <column name="secret_2fa" type="VARCHAR(32)"/>
             <column name="valid_from" type="datetime"/>
             <column name="valid_till" type="datetime"/>
             <column name="last_login" type="datetime"/>
