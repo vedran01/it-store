@@ -11,8 +11,7 @@ import java.util.*;
 @Table(name = "sec_identity")
 public class SecurityIdentity extends AbstractEntity {
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "identity")
     private User user;
 
     @Enumerated(EnumType.STRING)

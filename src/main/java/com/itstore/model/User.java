@@ -8,7 +8,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -20,20 +22,24 @@ public class User extends AbstractEntity {
     private String firstname;
     @Column(name = "last_name")
     private String lastname;
-    private String email;
-    private String phone;
-    private String country;
-    private String city;
-    private String street;
-    private String zip;
+
+    @Embedded
+    Contact contact;
+
+    @Embedded
+    private Location location;
     private boolean enabled;
     @CreatedDate
     private Date created;
     @LastModifiedDate
     private Date modified;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @JoinColumn(name = "identity_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private SecurityIdentity identity;
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Organization> organizations = new HashSet<>();
 
     public String getUsername() {
         return username;
@@ -67,52 +73,20 @@ public class User extends AbstractEntity {
         this.lastname = lastname;
     }
 
-    public String getEmail() {
-        return email;
+    public Contact getContact() {
+        return contact;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 
-    public String getPhone() {
-        return phone;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public boolean isEnabled() {
@@ -147,12 +121,19 @@ public class User extends AbstractEntity {
         this.identity = identity;
     }
 
+    public Set<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    public void setOrganizations(Set<Organization> organizations) {
+        this.organizations = organizations;
+    }
+
     public static User example(String search) {
         User user = new User();
         user.setUsername(search);
         user.setFirstname(search);
         user.setLastname(search);
-        user.setEmail(search);
         return user;
     }
 

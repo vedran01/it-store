@@ -25,7 +25,7 @@
             GROUP_CONCAT(distinct gp.`key`, ':', scg.permitted SEPARATOR '::')  'groupPermissions',
             GROUP_CONCAT(distinct rp.`key`, ':', spr.permitted SEPARATOR '::') 'rolePermissions'
             FROM sec_identity sid
-            INNER JOIN user u ON u.id = sid.user_id
+            INNER JOIN user u ON sid.id = u.identity_id
             LEFT JOIN sec_identity_group sidg ON sid.id = sidg.identity_id
             LEFT JOIN sec_identity_role sidr ON sid.id = sidr.identity_id
             LEFT JOIN sec_group sg ON sg.id = sidg.group_id AND sg.enabled = true

@@ -3,8 +3,9 @@ package com.itstore.data.converter;
 import com.itstore.core.data.converter.Converter;
 import com.itstore.data.dto.UserDTO;
 import com.itstore.data.dto.UserSettingsDTO;
+import com.itstore.model.Contact;
+import com.itstore.model.Location;
 import com.itstore.model.User;
-import com.itstore.security.identity.IdentityDetails;
 import com.itstore.security.model.SecurityIdentity;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +29,19 @@ public class UserConverter implements Converter<UserDTO, User> {
         dto.setUsername(user.getUsername());
         dto.setFirstname(user.getFirstname());
         dto.setLastname(user.getLastname());
-        dto.setEmail(user.getEmail());
-        dto.setPhone(user.getPhone());
-        dto.setCountry(user.getCountry());
-        dto.setCity(user.getCity());
-        dto.setZip(user.getZip());
-        dto.setStreet(user.getStreet());
+
+        Contact contact = user.getContact();;
+
+        dto.setEmail(contact.getEmail());
+        dto.setPhone(contact.getPhone());
+
+        Location location = user.getLocation();
+
+        dto.setCountry(location.getCountry());
+        dto.setCity(location.getCity());
+        dto.setZip(location.getZip());
+        dto.setStreet(location.getStreet());
+
         dto.setCreated(user.getCreated());
         dto.setModified(user.getModified());
         dto.setEnabled(user.isEnabled());

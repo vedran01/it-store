@@ -5,31 +5,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd
                    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
 
-    <changeSet author="vbradara" id="d0674f71-c06a-436c-ac59-80e31ff6ba31">
-        <createTable tableName="user">
-            <column name="id" autoIncrement="true" type="BIGINT">
-                <constraints primaryKey="true" primaryKeyName="PK_User"/>
-            </column>
-            <column name="username" type="VARCHAR(50)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="password" type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="first_name" type="VARCHAR(50)"/>
-            <column name="last_name" type="VARCHAR(50)"/>
-            <column name="email" type="VARCHAR(70)"/>
-            <column name="phone" type="VARCHAR(50)"/>
-            <column name="country" type="VARCHAR(3)"/>
-            <column name="city" type="VARCHAR(30)"/>
-            <column name="street" type="VARCHAR(50)"/>
-            <column name="zip" type="VARCHAR(15)"/>
-            <column name="enabled" type="boolean" defaultValue="true">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
-            <column name="modified" type="datetime"/>
-        </createTable>
+
+    <changeSet author="vbradara" id="49872a5f-3c32-4f11-b42a-9cb226313e85">
+        <sqlFile path="db/changelog/security_acl_schema.sql"/>
     </changeSet>
 
     <changeSet author="vbradara" id="d468edcf-d452-4f45-b253-d103a900bb60">
@@ -38,14 +16,12 @@
                 <constraints primaryKey="true" primaryKeyName="PK_Sec_Identity"/>
             </column>
             <column name="type" type="ENUM('SYSTEM', 'INTERNAL', 'USER')" defaultValue="USER"/>
-            <column name="user_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
+
             <column name="uuid" type="VARCHAR(40)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="enabled_2fa" type="boolean" defaultValueBoolean="false">
-                    <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="configured_2fa" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
@@ -56,17 +32,6 @@
             <column name="last_login" type="datetime"/>
             <column name="password_changed" type="datetime"/>
         </createTable>
-
-        <addForeignKeyConstraint baseTableName="sec_identity"
-                                 baseColumnNames="user_id"
-                                 constraintName="sec_identity_user_id"
-                                 referencedTableName="user"
-                                 referencedColumnNames="id"/>
-
-        <addUniqueConstraint tableName="sec_identity"
-                             columnNames="user_id"
-                             constraintName="sec_identity_user_id_UNIQUE"/>
-
     </changeSet>
 
     <changeSet author="vbradara" id="7f913b87-6ca8-4fff-883e-eacf5c76c5c8">
@@ -89,10 +54,10 @@
         </createTable>
 
         <createTable tableName="sec_identity_role">
-            <column name="identity_id" type="BIGINT" >
+            <column name="identity_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="role_id" type="BIGINT" >
+            <column name="role_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -138,10 +103,10 @@
         </createTable>
 
         <createTable tableName="sec_identity_group">
-            <column name="identity_id" type="BIGINT" >
+            <column name="identity_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="group_id" type="BIGINT" >
+            <column name="group_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -165,10 +130,10 @@
                              constraintName="sec_identity_group_sec_identity_group_id_UNIQUE"/>
 
         <createTable tableName="sec_group_role">
-            <column name="group_id" type="BIGINT" >
+            <column name="group_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="role_id" type="BIGINT" >
+            <column name="role_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -338,7 +303,98 @@
 
     </changeSet>
 
-    <changeSet author="vbradara" id="49872a5f-3c32-4f11-b42a-9cb226313e85">
-        <sqlFile path="db/changelog/security_acl_schema.sql"/>
+    <changeSet author="vbradara" id="0a3a3ef3-e4d2-4153-98f5-af7c1b111447">
+        <createTable tableName="organization">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="PK_Organization"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(70)"/>
+            <column name="phone" type="VARCHAR(50)"/>
+            <column name="country" type="VARCHAR(3)"/>
+            <column name="city" type="VARCHAR(30)"/>
+            <column name="street" type="VARCHAR(50)"/>
+            <column name="zip" type="VARCHAR(15)"/>
+            <column name="org_identity_id" type="BIGINT"/>
+            <column name="enabled" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="modified" type="datetime"/>
+        </createTable>
+
     </changeSet>
+
+    <changeSet author="vbradara" id="d0674f71-c06a-436c-ac59-80e31ff6ba31">
+        <createTable tableName="user">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="PK_User"/>
+            </column>
+            <column name="username" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="email" type="VARCHAR(70)"/>
+            <column name="phone" type="VARCHAR(50)"/>
+            <column name="country" type="VARCHAR(3)"/>
+            <column name="city" type="VARCHAR(30)"/>
+            <column name="street" type="VARCHAR(50)"/>
+            <column name="zip" type="VARCHAR(15)"/>
+            <column name="enabled" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="identity_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="modified" type="datetime"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="user"
+                                 baseColumnNames="identity_id"
+                                 constraintName="user_identity_id"
+                                 referencedTableName="sec_identity"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="user"
+                             columnNames="identity_id"
+                             constraintName="user_identity_id_UNIQUE"/>
+
+    </changeSet>
+    
+    <changeSet author="vbradara" id="fd0c1245-6faa-47f9-9051-730051619b0c">
+        <createTable tableName="organization_user">
+            <column name="organization_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="organization_user"
+                                 baseColumnNames="organization_id"
+                                 constraintName="organization_user_organization_id"
+                                 referencedTableName="organization"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="organization_user"
+                                 baseColumnNames="user_id"
+                                 constraintName="organization_user_user_id"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+
+
+        <addUniqueConstraint tableName="organization_user"
+                             columnNames="organization_id, user_id"
+                             constraintName="organization_user_org_id_user_id_UNIQUE"/>
+
+    </changeSet>
+
 </databaseChangeLog>
