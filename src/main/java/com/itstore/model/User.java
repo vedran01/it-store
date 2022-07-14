@@ -1,14 +1,13 @@
 package com.itstore.model;
 
 import com.itstore.core.data.model.AbstractEntity;
-import com.itstore.security.model.SecurityIdentity;
+import com.itstore.model.security.SecurityIdentity;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,9 +36,6 @@ public class User extends AbstractEntity {
     @JoinColumn(name = "identity_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private SecurityIdentity identity;
-
-    @ManyToMany(mappedBy = "users")
-    private Set<Organization> organizations = new HashSet<>();
 
     public String getUsername() {
         return username;
@@ -119,14 +115,6 @@ public class User extends AbstractEntity {
 
     public void setIdentity(SecurityIdentity identity) {
         this.identity = identity;
-    }
-
-    public Set<Organization> getOrganizations() {
-        return organizations;
-    }
-
-    public void setOrganizations(Set<Organization> organizations) {
-        this.organizations = organizations;
     }
 
     public static User example(String search) {

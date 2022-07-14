@@ -3,8 +3,8 @@ package com.itstore.data.converter;
 import com.itstore.core.data.converter.Converter;
 import com.itstore.data.dto.PermissionDTO;
 import com.itstore.data.dto.ResourceDTO;
-import com.itstore.security.model.SecurityPermission;
-import com.itstore.security.model.SecurityResource;
+import com.itstore.model.security.SecurityPermission;
+import com.itstore.model.security.SecurityResource;
 import org.springframework.stereotype.Component;
 
 @Component

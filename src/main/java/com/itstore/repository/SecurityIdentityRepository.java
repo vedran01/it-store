@@ -1,6 +1,6 @@
 package com.itstore.repository;
 
-import com.itstore.security.model.SecurityIdentity;
+import com.itstore.model.security.SecurityIdentity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

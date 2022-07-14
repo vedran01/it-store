@@ -1,4 +1,4 @@
-package com.itstore.security.model;
+package com.itstore.model.security;
 
 import com.itstore.core.data.model.AbstractEntity;
 
@@ -9,18 +9,18 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "sec_permission_group")
-public class SecurityPermissionGroup extends AbstractEntity {
+@Table(name = "sec_permission_identity")
+public class SecurityPermissionIdentity extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "permission_id")
     private SecurityPermission permission;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
-    private SecurityGroup group;
+    @JoinColumn(name = "identity_id")
+    private SecurityIdentity identity;
 
-    private boolean permitted;
+    boolean permitted;
 
     public SecurityPermission getPermission() {
         return permission;
@@ -30,12 +30,12 @@ public class SecurityPermissionGroup extends AbstractEntity {
         this.permission = permission;
     }
 
-    public SecurityGroup getGroup() {
-        return group;
+    public SecurityIdentity getIdentity() {
+        return identity;
     }
 
-    public void setGroup(SecurityGroup group) {
-        this.group = group;
+    public void setIdentity(SecurityIdentity identity) {
+        this.identity = identity;
     }
 
     public boolean isPermitted() {
@@ -50,12 +50,12 @@ public class SecurityPermissionGroup extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SecurityPermissionGroup that = (SecurityPermissionGroup) o;
-        return Objects.equals(permission, that.permission) && Objects.equals(group, that.group);
+        SecurityPermissionIdentity that = (SecurityPermissionIdentity) o;
+        return Objects.equals(identity, that.identity) && Objects.equals(permission, that.permission);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(permission, group);
+        return Objects.hash(identity, permission);
     }
 }

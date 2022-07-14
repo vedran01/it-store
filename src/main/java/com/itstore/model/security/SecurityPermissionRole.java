@@ -1,4 +1,4 @@
-package com.itstore.security.model;
+package com.itstore.model.security;
 
 import com.itstore.core.data.model.AbstractEntity;
 
@@ -9,18 +9,18 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "sec_permission_identity")
-public class SecurityPermissionIdentity extends AbstractEntity {
+@Table(name = "sec_permission_role")
+public class SecurityPermissionRole extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "permission_id")
     private SecurityPermission permission;
 
     @ManyToOne
-    @JoinColumn(name = "identity_id")
-    private SecurityIdentity identity;
+    @JoinColumn(name = "role_id")
+    private SecurityRole role;
 
-    boolean permitted;
+    private boolean permitted;
 
     public SecurityPermission getPermission() {
         return permission;
@@ -30,12 +30,12 @@ public class SecurityPermissionIdentity extends AbstractEntity {
         this.permission = permission;
     }
 
-    public SecurityIdentity getIdentity() {
-        return identity;
+    public SecurityRole getRole() {
+        return role;
     }
 
-    public void setIdentity(SecurityIdentity identity) {
-        this.identity = identity;
+    public void setRole(SecurityRole role) {
+        this.role = role;
     }
 
     public boolean isPermitted() {
@@ -50,12 +50,12 @@ public class SecurityPermissionIdentity extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SecurityPermissionIdentity that = (SecurityPermissionIdentity) o;
-        return Objects.equals(identity, that.identity) && Objects.equals(permission, that.permission);
+        SecurityPermissionRole that = (SecurityPermissionRole) o;
+        return Objects.equals(role, that.role) && Objects.equals(permission, that.permission);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identity, permission);
+        return Objects.hash(role, permission);
     }
 }

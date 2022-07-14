@@ -1,4 +1,4 @@
-package com.itstore.security.model;
+package com.itstore.model.security;
 
 import com.itstore.core.data.model.AbstractEntity;
 

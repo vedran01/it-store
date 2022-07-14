@@ -6,7 +6,7 @@ import com.itstore.data.dto.UserSettingsDTO;
 import com.itstore.model.Contact;
 import com.itstore.model.Location;
 import com.itstore.model.User;
-import com.itstore.security.model.SecurityIdentity;
+import com.itstore.model.security.SecurityIdentity;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,7 +53,7 @@ public class UserService {
     public UserDTO findById(Long id) {
         return repository.findById(id)
                 .map(converter::convert)
-                .orElseThrow(() -> new NotFoundException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
     }
 
@@ -76,13 +75,13 @@ public class UserService {
     public UserInfoDTO getUserInfo(Long id) {
         return repository.findById(id)
                 .map(uIConverter::convert)
-                .orElseThrow(() -> new NotFoundException("User info not found"));
+                .orElseThrow(() -> new RuntimeException("User info not found"));
     }
 
     public UserSettingsDTO findUserSettings(Long id) {
         return repository.findById(id)
                 .map(((UserConverter) converter)::convertToSettings)
-                .orElseThrow(() -> new NotFoundException("User settings not found"));
+                .orElseThrow(() -> new RuntimeException("User settings not found"));
 
 
     }

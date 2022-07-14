@@ -1,4 +1,4 @@
-package com.itstore.security.model;
+package com.itstore.model.security;
 
 import com.itstore.core.data.model.AbstractEntity;
 
@@ -9,16 +9,16 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "sec_permission_role")
-public class SecurityPermissionRole extends AbstractEntity {
+@Table(name = "sec_permission_group")
+public class SecurityPermissionGroup extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "permission_id")
     private SecurityPermission permission;
 
     @ManyToOne
-    @JoinColumn(name = "role_id")
-    private SecurityRole role;
+    @JoinColumn(name = "group_id")
+    private SecurityGroup group;
 
     private boolean permitted;
 
@@ -30,12 +30,12 @@ public class SecurityPermissionRole extends AbstractEntity {
         this.permission = permission;
     }
 
-    public SecurityRole getRole() {
-        return role;
+    public SecurityGroup getGroup() {
+        return group;
     }
 
-    public void setRole(SecurityRole role) {
-        this.role = role;
+    public void setGroup(SecurityGroup group) {
+        this.group = group;
     }
 
     public boolean isPermitted() {
@@ -50,12 +50,12 @@ public class SecurityPermissionRole extends AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SecurityPermissionRole that = (SecurityPermissionRole) o;
-        return Objects.equals(role, that.role) && Objects.equals(permission, that.permission);
+        SecurityPermissionGroup that = (SecurityPermissionGroup) o;
+        return Objects.equals(permission, that.permission) && Objects.equals(group, that.group);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(role, permission);
+        return Objects.hash(permission, group);
     }
 }
